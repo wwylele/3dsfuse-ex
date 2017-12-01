@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <unordered_map>
+#include "aes_cmac.h"
 #include "fat.h"
 #include "file_interface.h"
 #include "metadata_table.h"
@@ -10,7 +11,8 @@ class DisaFile;
 
 class Disa : public FsInterface {
 public:
-    Disa(std::shared_ptr<FileInterface> container);
+    Disa(std::shared_ptr<FileInterface> container,
+         std::unique_ptr<AesCmacBlockProvider> block_provider = nullptr, const bytes& key = {});
 
     FsStat Find(const char* path) override;
     u32 MakeDir(const FsName& name, u32 parent) override;

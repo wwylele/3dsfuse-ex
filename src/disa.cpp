@@ -118,8 +118,16 @@ private:
     u32 block_size;
 };
 
-Disa::Disa(std::shared_ptr<FileInterface> container) {
-    auto header = container->Read(0x100, 0x6C);
+Disa::Disa(std::shared_ptr<FileInterface> container,
+           std::unique_ptr<AesCmacBlockProvider> block_provider, const bytes& key) {
+
+    std::shared_ptr<FileInterface> header_file = std::make_shared<SubFile>(container, 0x100, 0x100);
+    if (block_provider) {
+        auto signature = std::make_shared<SubFile>(container, 0x0, 0x10);
+        header_file =
+            std::make_shared<AesCmacSigned>(signature, header_file, key, std::move(block_provider));
+    }
+    auto header = header_file->Read(0, 0x6C);
     assert(Pop<u32>(header) == 0x41534944);
     assert(Pop<u32>(header) == 0x00040000);
     u64 partition_count = Pop<u64>(header);
@@ -144,7 +152,7 @@ Disa::Disa(std::shared_ptr<FileInterface> container) {
     assert(header.empty());
 
     auto table = std::make_shared<IvfcLevel>(
-        std::make_shared<SubFile>(container, 0x16C, 0x20),
+        std::make_shared<SubFile>(header_file, 0x06C, 0x20),
         std::make_shared<SubFile>(container, table_offset, table_size), table_size);
 
     auto save_difi_header = std::make_shared<SubFile>(table, save_entry_offset, save_entry_size);
