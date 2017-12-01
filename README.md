@@ -6,6 +6,6 @@ Inspired by [3dsfuse](https://github.com/3dshax/3ds/tree/master/3dsfuse) but rew
 TODO:
  - crypto layer and wear leveling support
  - Resign AES-CMAC header
- - File writing support
+ - File truncate support?
  - Extdata support
 

@@ -299,7 +299,7 @@ int main(int argc, char* argv[]) {
     op.open = FuseCallback::open;
     op.read = FuseCallback::read;
     op.write = FuseCallback::write;
-    op.truncate = FuseCallback::truncate;
+    // op.truncate = FuseCallback::truncate;
     op.release = FuseCallback::release;
     return fuse_main((int)fuse_argv.size(), fuse_argv.data(), &op);
 }

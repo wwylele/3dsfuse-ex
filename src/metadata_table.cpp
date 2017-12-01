@@ -248,34 +248,6 @@ private:
     DEFINE_ENTRY_FIELD(UnkB, u32, 0x28)
 };
 
-/*constexpr u32 HandleMagicFile = 0x01234567;
-constexpr u32 HandleMagicDir = 0x89ABCDEF;
-FsHandle FsHandle::Root = FsHandle::Dir(1);
-FsHandle::FsHandle() : fh(0) {}
-FsHandle::FsHandle(std::uint64_t fh) : fh (fh) {}
-FsHandle FsHandle::File(u32 index) {
-    return FsHandle(((u64) HandleMagicFile << 32) | index);
-}
-
-FsHandle FsHandle::Dir(u32 index) {
-    return FsHandle(((u64) HandleMagicDir << 32) | index);
-}
-
-FsHandleType FsHandle::Type() {
-    if (fh == 0)
-        return FsHandleType::None;
-    if ((fh >> 32) == HandleMagicFile)
-        return FsHandleType::File;
-    if ((fh >> 32) == HandleMagicDir)
-        return FsHandleType::Dir;
-    assert(false);
-
-}
-
-u32 FsHandle::Index() {
-    return (u32)(fh & 0xFFFFFFFF);
-}*/
-
 FsMetadata::FsMetadata(std::shared_ptr<FileInterface> de, std::shared_ptr<FileInterface> dh,
                        std::shared_ptr<FileInterface> fe, std::shared_ptr<FileInterface> fh)
     : directories(new DirectoryTable(std::move(de), std::move(dh))),

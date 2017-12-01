@@ -42,7 +42,42 @@ public:
         return end - offset;
     }
     std::size_t Write(std::size_t offset, std::size_t size, const u8* buf) override {
-        assert(false);
+        std::size_t origin_size = size;
+        std::size_t end = offset + size;
+        if (end > file_size) {
+            u32 new_block_size = AlignUp(end, block_size) / block_size;
+            if (file_size != 0) {
+                u32 old_block_size = AlignUp(file_size, block_size) / block_size;
+                if (new_block_size > old_block_size)
+                    fat->ExpandChain(chain, new_block_size - old_block_size);
+
+            } else {
+                chain = fat->AllocateChain(new_block_size);
+                block_index = chain[0].block_index;
+            }
+            assert(chain.size() == new_block_size);
+            file_size = end;
+        }
+
+        auto other = fat->GetChain(block_index);
+        assert(other == chain);
+
+        std::size_t cur = offset;
+
+        while (cur < end) {
+            std::size_t block_low = AlignDown(cur, block_size);
+            std::size_t offset_in_block = cur - block_low;
+            std::size_t block_up = std::min(block_low + block_size, end);
+            std::size_t size_in_block = block_up - cur;
+            std::size_t data_region_offset =
+                chain[block_low / block_size].block_index * block_size + offset_in_block;
+            bytes data(size_in_block);
+            std::memcpy(data.data(), buf, size_in_block);
+            data_image->Write(data_region_offset, data);
+            buf += size_in_block;
+            cur = block_up;
+        }
+        return origin_size;
     }
     std::size_t GetSize() override {
         return file_size;
