@@ -322,8 +322,6 @@ int main(int argc, char* argv[]) {
     --moveable MOVABLESED  movable.sed file required for decrypting SD files
     --boot9 BOOT9BIN       boot9.bin file required for generating AES keys
     --const CONSTANT       a 16-byte file that contains the key scrambler constant (hint: start with 0x1F)
-
-boot9.bin is required to put in current working directory for --sdsave and --nandsave
 )");
         return 0;
     }
