@@ -25,14 +25,13 @@ bytes CtrSav0AesCmacBlock::Block(const bytes& data) {
     return result;
 }
 
-CtrSignAesCmacBlock::CtrSignAesCmacBlock(u32 id_) : id(id_) {}
+CtrSignAesCmacBlock::CtrSignAesCmacBlock(u64 id_) : id(id_) {}
 
 bytes CtrSignAesCmacBlock::Block(const bytes& data) {
     const char* type = "CTR-SIGN";
     bytes result(8);
     std::memcpy(result.data(), type, 8);
-    result += Encode<u32>(id);
-    result += Encode<u32>(0x00040000);
+    result += Encode<u64>(id);
     result += CtrSav0AesCmacBlock().Hash(data);
     return result;
 }

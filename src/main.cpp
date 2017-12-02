@@ -318,7 +318,7 @@ int main(int argc, char* argv[]) {
                            --id, --movable, --boot9 and --const required.
     --nandsave             Mount save data in NAND filesystem. SOURCE is the NAND root path.
                            --id, --boot9 and --const required.
-    --id ID                ID (32-bit hex) of the save to mount
+    --id ID                ID (32- or 64-bit hex) of the save to mount
     --moveable MOVABLESED  movable.sed file required for decrypting SD files
     --boot9 BOOT9BIN       boot9.bin file required for generating AES keys
     --const CONSTANT       a 16-byte file that contains the key scrambler constant (hint: start with 0x1F)
@@ -406,7 +406,7 @@ int main(int argc, char* argv[]) {
             puts("Need --const argument.");
             exit(1);
         }
-        u32 id = (u32)std::strtol(in_id, nullptr, 16);
+        u64 id = (u64)std::strtoll(in_id, nullptr, 16);
         auto key = LoadKeyFromMovable(in_movable);
         if (key.empty()) {
             puts("Failed to open movable.sed");
@@ -425,7 +425,8 @@ int main(int argc, char* argv[]) {
                 break;
         }
         path += std::string("/") + dir->d_name;
-        std::string sub_path = "/title/00040000/" + IntToHex(id) + "/data/00000001.sav";
+        std::string sub_path = "/title/" + IntToHex((u32)(id >> 32)) + "/" +
+                               IntToHex((u32)(id & 0xFFFFFFFF)) + "/data/00000001.sav";
         path += sub_path;
 
         bytes path_to_hash;

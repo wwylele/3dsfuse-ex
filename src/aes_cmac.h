@@ -29,13 +29,13 @@ protected:
 
 class CtrSignAesCmacBlock : public AesCmacBlockProvider {
 public:
-    CtrSignAesCmacBlock(u32 id_);
+    CtrSignAesCmacBlock(u64 id_);
 
 protected:
     bytes Block(const bytes& data) override;
 
 private:
-    u32 id;
+    u64 id;
 };
 
 class AesCmacSigned : public FileInterface {
